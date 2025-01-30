@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "31832753832",
+    "project_id": "authen-56181",
+    "storage_bucket": "authen-56181.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31832753832:android:d14334be3e4c6e565d649d",
+        "android_client_info": {
+          "package_name": "com.example.petproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5x8XjTOUl9yBKDabUgY5oWxPcfRnadaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

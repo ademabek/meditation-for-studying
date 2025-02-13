@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:petproject/auth/login.dart';
+import 'package:petproject/auth/presentation/login.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
@@ -36,15 +36,15 @@ class _FirstPageState extends State<FirstPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    'assets/skippy.gif',
-                    height: 200,
-                    width: 200,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                // ClipRRect(
+                //   borderRadius: BorderRadius.circular(20),
+                //   child: Image.asset(
+                //     'assets/skippy.gif',
+                //     height: 200,
+                //     width: 200,
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
                 const SizedBox(height: 30),
                 const Text(
                   'Head Space',

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:petproject/faces/infopage.dart';
+
+import 'package:petproject/studypage/presentation/studypage.dart';
+
 import 'package:petproject/faces/profile.dart';
 import 'package:petproject/faces/today.dart';
 
@@ -12,10 +14,8 @@ class _BottomNavWithCardsState extends State<BottomNavWithCards> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    TodayPage(),
-    informationPage(
-      initialSearchQuery: '',
-    ),
+     TodayPage(),
+    StudyPage(),
     ProfilePage(),
   ];
 
@@ -39,9 +39,10 @@ class _BottomNavWithCardsState extends State<BottomNavWithCards> {
             icon: Icon(Icons.today),
             label: 'Today',
           ),
+       
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: 'Explore',
+            icon: Icon(Icons.book),
+            label: 'Education',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

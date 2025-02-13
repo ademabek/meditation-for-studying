@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:unsplash_client/unsplash_client.dart';
-
 class MusicPlayerPage extends StatefulWidget {
   final String title;
   final String description;
@@ -20,29 +18,17 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   late Timer _timer;
   late int _remainingTimeInSeconds;
   int _totalTimeInSeconds = 3600;
-  String? _imageUrl;
-
-  final client = UnsplashClient(
-    settings: ClientSettings(
-      credentials: AppCredentials(
-        accessKey: 'xYhvQU-lfWgGnbnqF7uG8NUOVKC3ZE9LzSvFVJ7sFU0',
-        secretKey: 'xyI12XqA1g05q4dQ48H3Hn4loCd7cy7yD909iD_cs1Y',
-      ),
-    ),
-  );
 
   @override
   void initState() {
     super.initState();
     _setTotalTime(widget.description);
     _remainingTimeInSeconds = _totalTimeInSeconds;
-    _fetchRandomImage();
   }
 
   @override
   void dispose() {
     _timer.cancel();
-    client.close();
     super.dispose();
   }
 
@@ -85,17 +71,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     return "${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}";
   }
 
-  Future<void> _fetchRandomImage() async {
-    try {
-      final photos = await client.photos.random(count: 1).goAndGet();
-      setState(() {
-        _imageUrl = photos.first.urls.regular.toString();
-      });
-    } catch (e) {
-      print('Error fetching image: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,20 +99,15 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               ),
             ),
             const SizedBox(height: 30),
-            _imageUrl != null
-                ? CircleAvatar(
-                    radius: 80,
-                    backgroundImage: NetworkImage(_imageUrl!),
-                  )
-                : CircleAvatar(
-                    radius: 80,
-                    backgroundColor: Colors.deepPurple.withOpacity(0.1),
-                    child: const Icon(
-                      Icons.music_note,
-                      size: 80,
-                      color: Colors.deepPurple,
-                    ),
-                  ),
+            CircleAvatar(
+              radius: 80,
+              backgroundColor: Colors.deepPurple.withOpacity(0.1),
+              child: const Icon(
+                Icons.music_note,
+                size: 80,
+                color: Colors.deepPurple,
+              ),
+            ),
             const SizedBox(height: 30),
             Slider(
               value: _currentPosition,

@@ -4,7 +4,7 @@ class MeditationTimerPage extends StatefulWidget {
   final String title;
   final int time;
 
-  MeditationTimerPage({required this.title, required this.time});
+  const MeditationTimerPage({required this.title, required this.time});
 
   @override
   _MeditationTimerPageState createState() => _MeditationTimerPageState();

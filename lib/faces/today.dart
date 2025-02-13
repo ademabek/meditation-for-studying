@@ -1,19 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:petproject/faces/meditation/meditation-timer.dart';
+import 'package:petproject/faces/profile.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:petproject/cubit/meditation_cubit.dart';
-import 'package:petproject/timermedi.dart';
+import 'package:petproject/studypage/data/meditation_cubit.dart';
+import 'package:petproject/auth/data/profile-provider.dart';
+import 'package:just_audio/just_audio.dart'; // Add this package to your pubspec.yaml
 
-class TodayPage extends StatelessWidget {
+class TodayPage extends StatefulWidget {
+  const TodayPage({super.key});
+
+  @override
+  _TodayPageState createState() => _TodayPageState();
+}
+
+class _TodayPageState extends State<TodayPage> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  String? _currentPlayingAudio;
+
+  final Map<String, String> _audioFiles = {
+    'General Anxiety': 'assets/firstpage.mp3',
+    'Follow the Breath': 'assets/firstpage.mp3',
+    'Stress and Sleep': 'assets/firstpage.mp3',
+    'Lavender Fields': 'assets/firstpage.mp3',
+  };
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final profile = Provider.of<Profile>(context);
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications, color: Colors.black),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
+            },
+            icon: const Icon(Icons.account_circle, color: Colors.black),
           ),
         ],
       ),
@@ -22,9 +56,9 @@ class TodayPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Hi, Stephanie!",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            Text(
+              "Hi, ${profile.name.isNotEmpty ? profile.name : '...'}!",
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(
@@ -109,10 +143,12 @@ class TodayPage extends StatelessWidget {
                   builder: (context) => MeditationTimerPage(
                     title: title,
                     time: 5,
+                    onProgressStarted: () {
+                      context.read<MeditationCubit>().markCompleted(title);
+                    },
                   ),
                 ),
-              ).then(
-                  (_) => context.read<MeditationCubit>().markCompleted(title));
+              );
             },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -125,7 +161,7 @@ class TodayPage extends StatelessWidget {
               BoxShadow(
                 color: Colors.grey.withOpacity(0.2),
                 blurRadius: 6,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -134,21 +170,20 @@ class TodayPage extends StatelessWidget {
               Icon(Icons.music_note, size: 40, color: Colors.orange),
               const SizedBox(width: 16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 5),
-                    const Text(
-                      "Podcast • 5 min",
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ],
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
+              ),
+              IconButton(
+                icon: Icon(
+                  _currentPlayingAudio == title
+                      ? Icons.pause_circle
+                      : Icons.play_circle,
+                  color: Colors.blue,
+                ),
+                onPressed: () => _playMeditationAudio(title),
               ),
               isCompleted
                   ? const Icon(Icons.check_circle, color: Colors.green)
@@ -158,5 +193,38 @@ class TodayPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _playMeditationAudio(String title) async {
+    if (_currentPlayingAudio == title) {
+      await _audioPlayer.pause();
+      setState(() {
+        _currentPlayingAudio = null;
+      });
+    } else {
+      await _audioPlayer.stop();
+
+      final audioPath = _audioFiles[title];
+      if (audioPath == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Audio file not found')),
+        );
+        return;
+      }
+
+      try {
+        print('Playing audio: $audioPath');
+        await _audioPlayer.setAsset(audioPath);
+        await _audioPlayer.play();
+
+        setState(() {
+          _currentPlayingAudio = title;
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error playing audio: $e')),
+        );
+      }
+    }
   }
 }
